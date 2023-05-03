@@ -31,15 +31,14 @@ button {
   flex-wrap: wrap;
   gap: 50px;
   margin: 0 auto;
- margin-bottom: 50px;
-
+  margin-bottom: 50px;
 }
 .gallery-section {
-  padding:50px;
+  padding: 50px;
 }
 .photo-card {
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
   border: 2px solid black;
   border-radius: 20px;
   overflow: hidden;
@@ -63,7 +62,7 @@ img {
   border-color: black;
   background-color: rgb(127, 164, 200);
   font-weight: 600;
-  color:rgb(72, 46, 149);
+  color: rgb(72, 46, 149);
   border: 2px solid rgb(142, 78, 147);
   cursor: pointer;
 }
@@ -75,6 +74,6 @@ img {
 .last-message {
   font-size: 20px;
   font-weight: 500;
-text-align: center;
-color: rgb(88, 21, 21);
+  text-align: center;
+  color: black;
 }
