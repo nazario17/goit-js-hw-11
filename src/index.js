@@ -1,11 +1,11 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { createMarkup } from './js/createMarkup';
-import { getImages } from './js/fetchImages';
+import { createMarkup } from './js/createMarkUp.js';
+import { getImages } from './js/fetchImages.js';
 import {
   openImageModal,
   refreshImageModal
-} from './js/simpleLightBox';
-import scrollBy from './js/scroll';
+} from './js/simpleLightBox.js';
+import scrollBy from './js/scroll.js';
 
 const form = document.querySelector('.js-search-form');
 const galleryEl = document.querySelector('.gallery');
