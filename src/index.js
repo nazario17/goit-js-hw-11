@@ -1,67 +1,54 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { createMarkup } from './js/createMarkUp';
+import { createMarkup } from './js/createMarkup';
 import { getImages } from './js/fetchImages';
 import {
   openImageModal,
-  refreshImageModal,
-  closeModal,
+  refreshImageModal
 } from './js/simpleLightBox';
 import scrollBy from './js/scroll';
 
 const form = document.querySelector('.js-search-form');
 const galleryEl = document.querySelector('.gallery');
 const lastMessage = document.querySelector('.last-message');
-const target = document.querySelector('.js-guard');
+const buttonOnLoad = document.querySelector('.load-more');
+
 
 let currentPage = 1;
 let queryParam = null;
 
-let options = {
-  root: null,
-  rootMargin: '200px',
-  threshold: 1.0,
-};
-
-let observer = new IntersectionObserver(onLoadMore, options);
-
 form.addEventListener('submit', onSearchForm);
+buttonOnLoad.addEventListener('click', onLoadMore);
 galleryEl.addEventListener('click', evt => {
   evt.preventDefault();
 });
 
-function onLoadMore(entries, observer) {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      currentPage += 1;
-      renderImagesOnLoadMore();
-    }
-  });
+function onLoadMore() {
+  currentPage += 1;
+  renderImagesOnLoadMore(queryParam, currentPage);
 }
 
 function onSearchForm(evt) {
   evt.preventDefault();
   queryParam = evt.currentTarget.elements.searchQuery.value;
   galleryEl.innerHTML = '';
+  buttonOnLoad.classList.add('is-hidden');
   if (!queryParam) {
     Notify.warning('Please, fill the field');
     return;
   }
   renderImagesBySubmit(queryParam);
-  observer.observe(target);
 }
 
 async function renderImagesOnLoadMore() {
   try {
     const response = await getImages(queryParam, currentPage);
     const dataArray = response.data.hits;
-
-    galleryEl.insertAdjacentHTML('beforeend', createMarkup(dataArray));
-    if (dataArray.length * currentPage > response.data.totalHits) {
-      observer.unobserve(target);
-      lastMessage.textContent = `Hooray! All images has finished.`;
+    if (currentPage * 40 > response.data.totalHits) {
+      buttonOnLoad.classList.add('is-hidden');
+      lastMessage.textContent = `Hooray! We found ${response.data.totalHits} images.`;
     }
+    galleryEl.insertAdjacentHTML('beforeend', createMarkup(dataArray));
     scrollBy();
-
     const newGalleryItems = galleryEl.querySelectorAll('.gallery a');
     const lightbox = new SimpleLightbox(newGalleryItems);
     newGalleryItems.forEach(item => {
@@ -84,6 +71,11 @@ async function renderImagesBySubmit() {
     if (!dataArray.length) throw new Error('not found');
     if (dataArray.length)
       Notify.info(`Hooray! We found ${response.data.totalHits} images.`);
+    if (dataArray.length >= 40) {
+      buttonOnLoad.classList.remove('is-hidden');
+    } else {
+      lastMessage.textContent = `Hooray! We found ${response.data.totalHits} images.`;
+    }
     openImageModal();
     scrollBy();
   } catch (error) {
